@@ -4,9 +4,9 @@ using Arquitetura.Domain.Interfaces.Services;
 
 namespace Arquitetura.Services.Services
 {
-    public class UserService : BaseService<UserEntity>, IUserService
+    public class UserService : BaseService<User>, IUserService
     {
-        public UserService(IRepository<UserEntity> repository) : base(repository)
+        public UserService(IRepository<User> repository) : base(repository)
         {
 
         }

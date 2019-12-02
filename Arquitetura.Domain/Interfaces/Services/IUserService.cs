@@ -2,7 +2,7 @@
 
 namespace Arquitetura.Domain.Interfaces.Services
 {
-    public interface IUserService : IService<UserEntity>
+    public interface IUserService : IService<User>
     {
 
     }

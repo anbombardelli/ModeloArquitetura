@@ -19,7 +19,7 @@ namespace Arquitetura.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] UserEntity item)
+        public IActionResult Post([FromBody] User item)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace Arquitetura.API.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] UserEntity item)
+        public IActionResult Put([FromBody] User item)
         {
             try
             {

@@ -4,7 +4,7 @@ using System;
 
 namespace Arquitetura.Services.Validator
 {
-    public class UserValidator : AbstractValidator<UserEntity>
+    public class UserValidator : AbstractValidator<User>
     {
         public UserValidator()
         {

@@ -75,8 +75,8 @@ namespace Arquitetura.Services.Services
                     }
                 );
 
-            DateTime dataCriacao = DateTime.Now;
-            DateTime dataExpiracao = dataCriacao + TimeSpan.FromSeconds(TokenConfiguration.Seconds);
+            DateTime CreatedDate = DateTime.Now;
+            DateTime ExpirationDate = CreatedDate + TimeSpan.FromSeconds(TokenConfiguration.Seconds);
 
             var handler = new JwtSecurityTokenHandler();
             var securityToken = handler.CreateToken(new SecurityTokenDescriptor
@@ -85,16 +85,16 @@ namespace Arquitetura.Services.Services
                 Audience = TokenConfiguration.Audience,
                 SigningCredentials = SigningConfiguration.SigningCredentials,
                 Subject = identity,
-                NotBefore = dataCriacao,
-                Expires = dataExpiracao
+                NotBefore = CreatedDate,
+                Expires = ExpirationDate
             });
             var token = handler.WriteToken(securityToken);
 
             return new
             {
                 authenticated = true,
-                created = dataCriacao.ToString("yyyy-MM-dd HH:mm:ss"),
-                expiration = dataExpiracao.ToString("yyyy-MM-dd HH:mm:ss"),
+                created = CreatedDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                expiration = ExpirationDate.ToString("yyyy-MM-dd HH:mm:ss"),
                 accessToken = token,
                 message = "OK"
             };

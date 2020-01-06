@@ -39,18 +39,18 @@ namespace Arquitetura.Services.Services
             bool ValidCredentials = false;
             User userBase = null;
 
-            if (UserAuthentication != null && !String.IsNullOrWhiteSpace(UserAuthentication.Email) && !String.IsNullOrWhiteSpace(UserAuthentication.Password))
+            if (user != null && !String.IsNullOrWhiteSpace(user.Email) && !String.IsNullOrWhiteSpace(user.Password))
             {
 
                 IUserRepository UserRepository = new UserRepository(_configuration);
 
-                userBase = UserRepository.Get(new User { Email = UserAuthentication.Email });
+                userBase = UserRepository.Get(new User { Email = user.Email });
 
      
                 if (userBase == null)
                     throw new Exception("User not found!");
 
-                ValidCredentials = PasswordExtension.VerifyPasswordHash(UserAuthentication.Password, userBase.PasswordHash, userBase.PasswordSalt);
+                ValidCredentials = PasswordExtension.VerifyPasswordHash(user.Password, userBase.PasswordHash, userBase.PasswordSalt);
             }
 
             if (ValidCredentials)

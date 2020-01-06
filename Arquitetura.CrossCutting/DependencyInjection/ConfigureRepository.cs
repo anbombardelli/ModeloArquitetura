@@ -4,12 +4,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arquitetura.CrossCutting.DependencyInjection
 {
-    public class ConfigureRepository
+    public static class ConfigureRepository
     {
-        public static void ConfigureDependenciesRepository(IServiceCollection serviceCollection)
+        public static IServiceCollection ConfigureDependenciesRepository(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            //serviceCollection.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
+
+            return serviceCollection;
         }
     }
 }

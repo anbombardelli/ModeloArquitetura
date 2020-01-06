@@ -1,58 +1,43 @@
 ﻿using Arquitetura.Domain.Entities;
-using Arquitetura.Domain.Interfaces.Repository;
-using Arquitetura.Domain.Interfaces.Services;
+using Arquitetura.Services.Validator.Notification;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
+using FluentValidation.Results;
 
 namespace Arquitetura.Services.Services
 {
-    public class BaseService<T> : IService<T> where T : BaseEntity
+    public class BaseService
     {
-        private IRepository<T> _repository;
+        private readonly INotification _notification;
 
-        public BaseService(IRepository<T> repository)
+        public BaseService(INotification notification)
         {
-            _repository = repository;
+            _notification = notification;
         }
 
-        public void Delete(int id)
+        public void Notify(ValidationResult validationResult)
         {
-            _repository.Delete(id);
+            foreach (var error in validationResult.Errors)
+            {
+                Notify(error.ErrorMessage);
+            }
         }
 
-        public T Get(int id)
+        public void Notify(string errorMessage)
         {
-            return _repository.Select(id);
+            _notification.Handle(new Message(errorMessage));
         }
 
-        public IList<T> Get()
+        public bool Validate<TValidation, TEntity>(TValidation validation, TEntity entity)
+            where TValidation : AbstractValidator<TEntity> where TEntity : BaseEntity
         {
-            return _repository.SelectAll();
-        }
+            var validator = validation.Validate(entity);
 
-        public T Post<V>(T obj) where V : AbstractValidator<T>
-        {
-            Validate(obj, Activator.CreateInstance<V>());
+            if (validator.IsValid)
+                return true;
 
-            _repository.Insert(obj);
-            return obj;
-        }
+            Notify(validator);
 
-        public T Put<V>(T obj) where V : AbstractValidator<T>
-        {
-            Validate(obj, Activator.CreateInstance<V>());
-
-            _repository.Update(obj);
-            return obj;
-        }
-
-        private void Validate(T obj, AbstractValidator<T> validator)
-        {
-            if (obj == null)
-                throw new Exception("Registros não detectados!");
-
-            validator.ValidateAndThrow(obj);
+            return false;
         }
     }
 }

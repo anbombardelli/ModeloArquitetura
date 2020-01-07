@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using Arquitetura.API.ViewModels;
 using Arquitetura.Domain.Entities;
 using Arquitetura.Domain.Interfaces.Services;
-using Arquitetura.Services.Validator;
+using Arquitetura.Services.Validator.Notification;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Arquitetura.API.Controllers
@@ -9,78 +12,64 @@ namespace Arquitetura.API.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : MainController
     {
-        private IUserService _service;
+        private readonly IUserService _service;
+        private readonly INotification _notification;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService service)
+        public UserController(
+            IUserService service,
+            INotification notification,
+            IMapper mapper) : base(notification)
         {
             _service = service;
+            _notification = notification;
+            _mapper = mapper;
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] User item)
+        public ActionResult Post(UserViewModel userViewModel)
         {
-            try
-            {
-                _service.Post<UserValidator>(item);
+            if (!ModelState.IsValid)
+                return CustomResponse(ModelState);
 
-                return new ObjectResult(item.Id);
-            }
-            catch (ArgumentNullException ex)
-            {
-                return NotFound(ex);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            var user = _mapper.Map<User>(userViewModel);
+            _service.Post(user);
+
+            return CustomResponse(userViewModel);
         }
 
-        [HttpPut]
-        public IActionResult Put([FromBody] User item)
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id, UserViewModel userViewModel)
         {
-            try
-            {
-                _service.Post<UserValidator>(item);
+            if (id != userViewModel.Id)
+                return BadRequest();
 
-                return new ObjectResult(item);
-            }
-            catch (ArgumentNullException ex)
-            {
-                return NotFound(ex);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            if (!ModelState.IsValid)
+                return CustomResponse(ModelState);
+
+            var user = _mapper.Map<User>(userViewModel);
+            _service.Put(user);
+
+            return CustomResponse(userViewModel);
         }
 
-        [HttpDelete]
-        public IActionResult Delete(int id)
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
         {
-            try
-            {
-                _service.Delete(id);
+            _service.Delete(id);
 
-                return new NoContentResult();
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            return CustomResponse();
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public ActionResult<IEnumerable<UserViewModel>> Get()
         {
             try
             {
-                return new ObjectResult(_service.Get());
+                var users = _mapper.Map<IEnumerable<UserViewModel>>(_service.Get());
+                return Ok(users);
             }
             catch (Exception ex)
             {
@@ -89,11 +78,15 @@ namespace Arquitetura.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public ActionResult<UserViewModel> Get(int id)
         {
             try
             {
-                return new ObjectResult(_service.Get(id));
+                var userViewModel = _mapper.Map<UserViewModel>(_service.Get(id));
+                if (userViewModel == null)
+                    return NotFound();
+
+                return userViewModel;
             }
             catch (ArgumentException ex)
             {

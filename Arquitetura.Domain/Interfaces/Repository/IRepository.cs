@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Arquitetura.Domain.Interfaces.Repository
 {
-    public interface IRepository <TEntity> where TEntity : BaseEntity
+    public interface IRepository <T> where T : BaseEntity
     {
-        void Insert(TEntity obj);
+        void Insert(T obj);
 
-        void Update(TEntity obj);
+        void Update(T obj);
 
         void Delete(int id);
 
-        TEntity Select(int id);
+        T Select(int id);
 
-        IList<TEntity> SelectAll();
+        IList<T> SelectAll();
     }
 }

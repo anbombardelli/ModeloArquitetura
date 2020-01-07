@@ -1,4 +1,5 @@
 using Arquitetura.CrossCutting.DependencyInjection;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,9 @@ namespace Arquitetura.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
-            
+
+            services.AddAutoMapper(typeof(Startup));
+
             //Desabilita BadRequest() via ModelState. 
             //Facilita customização de mensagens
             services.Configure<ApiBehaviorOptions>(options =>

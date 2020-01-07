@@ -31,23 +31,30 @@ namespace Arquitetura.Services.Services
             return _repository.SelectAll();
         }
 
-        public User Post(User user)
+        public bool Post(User user)
         {
-            Validation(user);
+            if (!Validate(user))
+                return false;
 
-            _repository.Insert(user);
-            return user;
+           _repository.Insert(user);
+            return true;
         }
 
-        public User Put(User user)
+        public bool Put(User user)
         {
-            Validation(user);
+            if (!Validate(user))
+                return false;
 
             _repository.Update(user);
-            return user;
+            return true;
         }
 
-        private void Validation(User user)
+        private bool Validate(User user)
+        {            
+            return Validate(new UserValidator(), user);
+        }
+
+        private void ValideThrowsException(User user)
         {
             var validator = new UserValidator();
             if (!Validate(validator, user))

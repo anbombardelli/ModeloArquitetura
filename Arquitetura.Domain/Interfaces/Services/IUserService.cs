@@ -5,9 +5,9 @@ namespace Arquitetura.Domain.Interfaces.Services
 {
     public interface IUserService
     {
-        User Post(User user);
+        bool Post(User user);
 
-        User Put(User user);
+        bool Put(User user);
 
         void Delete(int id);
 

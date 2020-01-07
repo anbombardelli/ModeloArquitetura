@@ -1,34 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Arquitetura.Domain.Entities;
 using Arquitetura.Domain.Interfaces.Services;
-using Arquitetura.Services.Services;
+using Arquitetura.Domain.ViewModels;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 
 namespace Arquitetura.API.Controllers
 {
     public class RegisterController : Controller
     {
-        private IConfiguration _configuration;
+        private readonly IRegisterService _registerService;
+        private readonly IMapper _mapper;
 
-        public RegisterController(IConfiguration configuration)
+        public RegisterController(IRegisterService registerService, IMapper mapper)
         {
-            _configuration = configuration;
+            _registerService = registerService;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
         [HttpPost("Register")]
-        public IActionResult Register([FromBody]User user)
+        public IActionResult Register(UserViewModel userViewModel)
         {
             try
             {
-                IRegisterService service = new RegisterService(_configuration);            
-
-                return Ok(service.Create(user));
+                var user = _mapper.Map<User>(userViewModel);
+                return Ok(_registerService.Create(user));
             }
             catch (Exception ex)
             {

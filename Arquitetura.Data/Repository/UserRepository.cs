@@ -10,17 +10,8 @@ namespace Arquitetura.Data.Repository
         {
 
         }
-        public User Add(User user)
-        {
-            throw new System.NotImplementedException();
-        }
 
         public User Get(User user)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        bool IUserRepository.Update(User user)
         {
             throw new System.NotImplementedException();
         }

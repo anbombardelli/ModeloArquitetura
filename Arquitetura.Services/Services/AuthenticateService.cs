@@ -7,30 +7,25 @@ using Arquitetura.Lib.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
-using System.Text;
 
 namespace Arquitetura.Services.Services
 {
     public class AuthenticationService : IAuthenticateService
     {
-        private static User UserAuthentication;
-        private static SigningConfiguration SigningConfiguration;
-        private static JWTConfiguration TokenConfiguration;
-        private IConfiguration _configuration;
+        private static SigningConfiguration _signingConfiguration;
+        private static JWTConfiguration _tokenConfiguration;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationService
-            (
-            SigningConfiguration signingConfiguration, 
-            JWTConfiguration tokenConfiguration , 
-            IConfiguration configuration
-            )
+        public AuthenticationService(
+            SigningConfiguration signingConfiguration,
+            JWTConfiguration tokenConfiguration,
+            IConfiguration configuration)
         {
-            SigningConfiguration = signingConfiguration;
-            TokenConfiguration = tokenConfiguration;
+            _signingConfiguration = signingConfiguration;
+            _tokenConfiguration = tokenConfiguration;
             _configuration = configuration;
         }
 
@@ -39,14 +34,11 @@ namespace Arquitetura.Services.Services
             bool ValidCredentials = false;
             User userBase = null;
 
-            if (user != null && !String.IsNullOrWhiteSpace(user.Email) && !String.IsNullOrWhiteSpace(user.Password))
+            if (user != null && !string.IsNullOrWhiteSpace(user.Email) && !string.IsNullOrWhiteSpace(user.Password))
             {
+                IUserRepository userRepository = new UserRepository(_configuration);
+                userBase = userRepository.Get(new User { Email = user.Email });
 
-                IUserRepository UserRepository = new UserRepository(_configuration);
-
-                userBase = UserRepository.Get(new User { Email = user.Email });
-
-     
                 if (userBase == null)
                     throw new Exception("User not found!");
 
@@ -64,8 +56,8 @@ namespace Arquitetura.Services.Services
                 };
             }
         }
-   
-        private static Object CreateToken(User userBase)
+
+        private static object CreateToken(User userBase)
         {
             ClaimsIdentity identity = new ClaimsIdentity(
                     new GenericIdentity(Convert.ToString(userBase.Id), "Login"),
@@ -76,14 +68,14 @@ namespace Arquitetura.Services.Services
                 );
 
             DateTime CreatedDate = DateTime.Now;
-            DateTime ExpirationDate = CreatedDate + TimeSpan.FromSeconds(TokenConfiguration.Seconds);
+            DateTime ExpirationDate = CreatedDate + TimeSpan.FromSeconds(_tokenConfiguration.Seconds);
 
             var handler = new JwtSecurityTokenHandler();
             var securityToken = handler.CreateToken(new SecurityTokenDescriptor
             {
-                Issuer = TokenConfiguration.Issuer,
-                Audience = TokenConfiguration.Audience,
-                SigningCredentials = SigningConfiguration.SigningCredentials,
+                Issuer = _tokenConfiguration.Issuer,
+                Audience = _tokenConfiguration.Audience,
+                SigningCredentials = _signingConfiguration.SigningCredentials,
                 Subject = identity,
                 NotBefore = CreatedDate,
                 Expires = ExpirationDate

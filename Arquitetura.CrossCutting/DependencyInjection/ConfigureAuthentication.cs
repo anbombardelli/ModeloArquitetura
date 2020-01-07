@@ -5,15 +5,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
-using System.Configuration;
 
 namespace Arquitetura.CrossCutting.DependencyInjection
 {
-    public class ConfigureAuthentication
+    public static class ConfigureAuthentication
     {
-        public static void ConfigureJWT(IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
-
             var signingConfigurations = new SigningConfiguration();
             services.AddSingleton(signingConfigurations);
 
@@ -47,6 +45,8 @@ namespace Arquitetura.CrossCutting.DependencyInjection
                     .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUser().Build());
             });
+
+            return services;
         }
     }
 }

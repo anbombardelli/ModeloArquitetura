@@ -1,29 +1,25 @@
-﻿using Arquitetura.Data.Repository;
-using Arquitetura.Domain.Entities;
+﻿using Arquitetura.Domain.Entities;
 using Arquitetura.Domain.Interfaces.Repository;
 using Arquitetura.Domain.Interfaces.Services;
 using Arquitetura.Lib.Extensions;
-using Microsoft.Extensions.Configuration;
 using System;
 
 namespace Arquitetura.Services.Services
 {
     public class RegisterService : IRegisterService
     {
-        private IConfiguration _configuration;
+        private readonly IUserRepository _userRepository;
 
-        public RegisterService(IConfiguration configuration)
+        public RegisterService(IUserRepository userRepository)
         {
-            _configuration = configuration;
+            _userRepository = userRepository;
         }
+
         public User Create(User user)
         {
             try
             {
-                IUserRepository repository = new UserRepository(_configuration);
-
-                var UserData = repository.Get(new User { Email = user.Email });
-
+                var UserData = _userRepository.Get(new User { Email = user.Email });
 
                 if (UserData != null)
                     throw new Exception("O email informado não está disponível.");
@@ -34,7 +30,7 @@ namespace Arquitetura.Services.Services
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
-                repository.Add(user);
+                _userRepository.Insert(user);
 
                 return user;
             }
@@ -50,9 +46,7 @@ namespace Arquitetura.Services.Services
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password))
                 return null;
 
-            IUserRepository UserRepository = new UserRepository(_configuration);
-
-            user = UserRepository.Get(new User { Email = user.Email });
+            user = _userRepository.Get(new User { Email = user.Email });
 
             if (user == null)
                 throw new Exception("User not found");
@@ -64,7 +58,7 @@ namespace Arquitetura.Services.Services
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            UserRepository.Update(user);
+            _userRepository.Update(user);
 
             return user;
         }

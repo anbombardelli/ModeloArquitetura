@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Arquitetura.Data.Repository
 {
-    public class BaseRepository<T> : IRepository<T> where T : BaseEntity
+    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private string dbString;
 
@@ -26,7 +26,7 @@ namespace Arquitetura.Data.Repository
 
         public void Delete(int id)
         {
-            string SQL = EntityUtil.GetDeleteQuery<T>();
+            string SQL = EntityUtil.GetDeleteQuery<TEntity>();
 
             using (SqlConnection con = GetConnection())
             {
@@ -36,7 +36,7 @@ namespace Arquitetura.Data.Repository
             }
         }
 
-        public void Insert(T obj)
+        public void Insert(TEntity obj)
         {
             string SQL = EntityUtil.GetInsertQuery(obj);
 
@@ -48,37 +48,37 @@ namespace Arquitetura.Data.Repository
             }
         }
 
-        public T Select(int id)
+        public TEntity Select(int id)
         {
-            string sql = EntityUtil.GetSelectByIdQuery<T>();
-            T result;
+            string sql = EntityUtil.GetSelectByIdQuery<TEntity>();
+            TEntity result;
 
             using (SqlConnection con = GetConnection())
             {
                 con.Open();
-                result = con.QueryFirstOrDefault<T>(sql, new { ID = id });
+                result = con.QueryFirstOrDefault<TEntity>(sql, new { ID = id });
                 con.Close();
             }
             return result;
         }
 
-        public IList<T> SelectAll()
+        public IList<TEntity> SelectAll()
         {
-            string SQL = EntityUtil.GetSelectAllQuery<T>();
+            string SQL = EntityUtil.GetSelectAllQuery<TEntity>();
 
-            List<T> list = null;
+            List<TEntity> list = null;
 
             using (SqlConnection con = GetConnection())
             {
                 con.Open();
-                list = con.Query<T>(SQL).ToList();
+                list = con.Query<TEntity>(SQL).ToList();
                 con.Close();
             }
 
             return list;
         }
 
-        public void Update(T obj)
+        public void Update(TEntity obj)
         {
             string sql = EntityUtil.GetUpdateQuery(obj);
 

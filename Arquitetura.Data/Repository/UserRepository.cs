@@ -10,5 +10,10 @@ namespace Arquitetura.Data.Repository
         {
 
         }
+
+        public User Get(User user)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

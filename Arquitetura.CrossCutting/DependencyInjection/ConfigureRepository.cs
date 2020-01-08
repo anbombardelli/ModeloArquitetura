@@ -6,12 +6,12 @@ namespace Arquitetura.CrossCutting.DependencyInjection
 {
     public static class ConfigureRepository
     {
-        public static IServiceCollection ConfigureDependenciesRepository(this IServiceCollection serviceCollection)
+        public static IServiceCollection ConfigureDependenciesRepository(this IServiceCollection services)
         {
-            //serviceCollection.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            serviceCollection.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IUserRepository, UserRepository>();
 
-            return serviceCollection;
+            return services;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Arquitetura.Services.Services
             return Validate(new UserValidator(), user);
         }
 
-        private void ValideThrowsException(User user)
+        private void ValidateThrowsException(User user)
         {
             var validator = new UserValidator();
             if (!Validate(validator, user))

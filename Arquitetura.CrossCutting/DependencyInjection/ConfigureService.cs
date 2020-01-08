@@ -7,12 +7,14 @@ namespace Arquitetura.CrossCutting.DependencyInjection
 {
     public static class ConfigureService
     {
-        public static IServiceCollection ConfigureDependenciesService(this IServiceCollection serviceCollection)
+        public static IServiceCollection ConfigureDependenciesService(this IServiceCollection services)
         {
-            serviceCollection.AddScoped<INotification, Notification>();
-            serviceCollection.AddScoped<IUserService, UserService>();
+            services.AddScoped<INotification, Notification>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRegisterService, RegisterService>();
+            services.AddScoped<IAuthenticateService, AuthenticationService>();
 
-            return serviceCollection;
+            return services;
         }
     }
 }

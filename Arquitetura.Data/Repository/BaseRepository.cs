@@ -15,8 +15,7 @@ namespace Arquitetura.Data.Repository
 
         public BaseRepository(IConfiguration configuration)
         {
-            var connectionString = configuration.GetSection("ConnectionStrings");
-            dbString = connectionString.GetSection("db").Value;
+             dbString = configuration.GetConnectionString("DatabaseConnection");
         }
 
         protected SqlConnection GetConnection()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Arquitetura.API.ViewModels;
 using Arquitetura.Domain.Entities;
 using Arquitetura.Domain.Interfaces.Services;
+using Arquitetura.Domain.ViewModels;
 using Arquitetura.Services.Validator.Notification;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;

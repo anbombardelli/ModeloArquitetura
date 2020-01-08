@@ -22,7 +22,14 @@ namespace Arquitetura.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+
+            //Controllers and Json response configuration
+            services.AddControllers(option => option.EnableEndpointRouting = false).AddJsonOptions(o =>
+            {
+                o.JsonSerializerOptions.PropertyNamingPolicy = null;
+                o.JsonSerializerOptions.DictionaryKeyPolicy = null;
+            });
+
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -41,16 +48,18 @@ namespace Arquitetura.API
 
             services.ConfigureDependenciesService();
             services.ConfigureDependenciesRepository();
-
+            services.ConfigureJWT(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+            if (env.IsDevelopment())    
                 app.UseDeveloperExceptionPage();
-            }
+            else
+                app.UseHsts();
+
+
 
             app.UseSwagger();
 
@@ -59,11 +68,20 @@ namespace Arquitetura.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        //.AllowAnyMethod();
+                        .WithMethods("POST", "GET", "DELETE", "PUT");
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

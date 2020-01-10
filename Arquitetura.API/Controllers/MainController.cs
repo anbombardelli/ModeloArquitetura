@@ -7,6 +7,7 @@ using System.Linq;
 namespace Arquitetura.API.Controllers
 {
     [ApiController]
+
     public abstract class MainController : ControllerBase
     {
         private readonly INotification _notification;
